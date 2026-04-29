@@ -8,727 +8,243 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
   <style>
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:        #F7F5F2;
-      --surface:   #FFFFFF;
-      --border:    #E2DDD8;
-      --border-f:  #B5A99A;
-      --text:      #1A1612;
-      --text-2:    #6B6259;
-      --text-3:    #A09589;
-      --accent:    #2D5BE3;
-      --accent-l:  #EEF2FD;
-      --green:     #1A7A5E;
-      --green-l:   #E8F6F1;
-      --amber:     #C67C00;
-      --amber-l:   #FFF6E3;
-      --red:       #C0392B;
-      --red-l:     #FDF0EE;
-      --radius:    12px;
-      --shadow:    0 2px 12px rgba(0,0,0,.06);
-      --shadow-lg: 0 8px 32px rgba(0,0,0,.10);
+      --bg:#F7F5F2;--surface:#FFFFFF;--border:#E2DDD8;--border-f:#B5A99A;
+      --text:#1A1612;--text-2:#6B6259;--text-3:#A09589;
+      --accent:#2D5BE3;--accent-l:#EEF2FD;
+      --green:#1A7A5E;--green-l:#E8F6F1;
+      --amber:#C67C00;--amber-l:#FFF6E3;
+      --red:#C0392B;--red-l:#FDF0EE;
+      --radius:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
     }
-
     html { scroll-behavior: smooth; }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:15px; line-height:1.6; }
+    .site-header { background:var(--surface); border-bottom:1px solid var(--border); padding:0 32px; height:64px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+    .logo { display:flex; align-items:center; gap:10px; font-family:'DM Serif Display',serif; font-size:20px; color:var(--text); text-decoration:none; }
+    .logo-dot { width:28px; height:28px; background:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; }
+    .logo-dot svg { width:14px; height:14px; fill:#fff; }
+    .header-badge { font-size:12px; color:var(--text-3); background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:4px 12px; }
+    .hero { padding:64px 32px 48px; max-width:720px; margin:0 auto; text-align:center; }
+    .hero-eyebrow { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); background:var(--accent-l); padding:6px 14px; border-radius:20px; margin-bottom:20px; }
+    .hero h1 { font-family:'DM Serif Display',serif; font-size:clamp(28px,4vw,40px); line-height:1.2; margin-bottom:16px; }
+    .hero h1 em { font-style:italic; color:var(--accent); }
+    .hero p { color:var(--text-2); font-size:16px; max-width:520px; margin:0 auto; }
+    .selector-section { max-width:860px; margin:0 auto; padding:0 32px 48px; }
+    .selector-label { font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-3); margin-bottom:16px; text-align:center; }
+    .selector-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    @media(max-width:640px){ .selector-grid{grid-template-columns:1fr;} .field-grid-2{grid-template-columns:1fr!important;} }
+    .type-card { background:var(--surface); border:2px solid var(--border); border-radius:var(--radius); padding:24px 20px; cursor:pointer; transition:border-color .2s,box-shadow .2s,transform .15s; text-align:center; position:relative; overflow:hidden; }
+    .type-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--card-color,var(--accent)); transform:scaleX(0); transition:transform .2s; transform-origin:left; }
+    .type-card:hover { border-color:var(--card-color,var(--accent)); box-shadow:var(--shadow); transform:translateY(-2px); }
+    .type-card:hover::before,.type-card.active::before { transform:scaleX(1); }
+    .type-card[data-type="advogada"]    { --card-color:#7C3AED; }
+    .type-card[data-type="brindes"]     { --card-color:#2D5BE3; }
+    .type-card[data-type="odontologia"] { --card-color:#1A7A5E; }
+    .type-icon { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:24px; }
+    .type-card h3 { font-size:15px; font-weight:600; margin-bottom:6px; }
+    .type-card p  { font-size:13px; color:var(--text-2); }
+    .form-wrapper { max-width:860px; margin:0 auto; padding:0 32px 80px; display:none; }
+    .form-wrapper.visible { display:block; animation:fadeUp .35s ease; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .form-header { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px 24px; margin-bottom:16px; display:flex; align-items:center; gap:14px; }
+    .form-header-icon { width:48px; height:48px; flex-shrink:0; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:24px; }
+    .form-header h2 { font-family:'DM Serif Display',serif; font-size:20px; }
+    .form-header p  { color:var(--text-2); font-size:13px; margin-top:3px; }
+    .form-section { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; }
+    .section-header { padding:15px 20px; display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; border-bottom:1px solid transparent; transition:background .15s; }
+    .section-header:hover { background:var(--bg); }
+    .section-header.open { border-bottom-color:var(--border); }
+    .section-num { width:26px; height:26px; border-radius:7px; background:var(--accent-l); color:var(--accent); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .section-title { font-size:14px; font-weight:600; flex:1; }
+    .section-chevron { width:16px; height:16px; color:var(--text-3); transition:transform .2s; flex-shrink:0; }
+    .section-header.open .section-chevron { transform:rotate(180deg); }
+    .section-body { padding:20px; display:none; }
+    .section-body.open { display:block; }
+    .field-grid { display:grid; gap:14px; }
+    .field-grid-2 { grid-template-columns:1fr 1fr; }
+    .field { display:flex; flex-direction:column; gap:5px; }
+    .field-full { grid-column:1/-1; }
+    label { font-size:13px; font-weight:500; color:var(--text-2); }
+    label .req { color:var(--red); margin-left:2px; }
+    label .hint { font-weight:400; color:var(--text-3); font-size:12px; display:block; margin-top:1px; }
+    input[type=text],input[type=email],input[type=tel],input[type=number],input[type=url],select,textarea {
+      width:100%; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text);
+      background:var(--surface); border:1.5px solid var(--border); border-radius:8px;
+      padding:9px 12px; transition:border-color .15s,box-shadow .15s; outline:none; -webkit-appearance:none;
+    }
+    input:focus,select:focus,textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-l); }
+    input::placeholder,textarea::placeholder { color:var(--text-3); }
+    textarea { resize:vertical; min-height:76px; }
+    .toggle-group { display:flex; flex-wrap:wrap; gap:7px; }
+    .toggle-opt { display:flex; align-items:center; gap:6px; font-size:13px; border:1.5px solid var(--border); border-radius:8px; padding:6px 11px; cursor:pointer; transition:border-color .15s,background .15s; background:var(--surface); user-select:none; }
+    .toggle-opt input { display:none; }
+    .toggle-opt.checked { border-color:var(--accent); background:var(--accent-l); color:var(--accent); font-weight:500; }
+    .toggle-dot { width:6px; height:6px; border-radius:50%; background:var(--border-f); flex-shrink:0; transition:background .15s; }
+    .toggle-opt.checked .toggle-dot { background:var(--accent); }
+    .radio-tabs { display:flex; gap:7px; flex-wrap:wrap; }
+    .radio-tab { font-size:13px; border:1.5px solid var(--border); border-radius:8px; padding:6px 14px; cursor:pointer; transition:all .15s; background:var(--surface); user-select:none; }
+    .radio-tab.selected { border-color:var(--accent); background:var(--accent-l); color:var(--accent); font-weight:500; }
+    .repeater-item { border:1.5px solid var(--border); border-radius:10px; padding:16px; background:var(--bg); position:relative; margin-bottom:10px; }
+    .repeater-header { font-size:13px; font-weight:600; color:var(--text-2); margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
+    .btn-remove { font-size:12px; color:var(--red); background:none; border:none; cursor:pointer; padding:3px 7px; border-radius:6px; transition:background .15s; }
+    .btn-remove:hover { background:var(--red-l); }
+    .btn-add { width:100%; border:1.5px dashed var(--border); background:none; border-radius:10px; padding:10px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--accent); cursor:pointer; transition:background .15s,border-color .15s; font-weight:500; }
+    .btn-add:hover { background:var(--accent-l); border-color:var(--accent); }
+    .info-box { border-radius:10px; padding:12px 14px; font-size:13px; margin-bottom:16px; line-height:1.5; }
+    .info-box.blue  { background:var(--accent-l); color:#1d4ed8; border-left:3px solid var(--accent); }
+    .info-box.amber { background:var(--amber-l);  color:#92400e; border-left:3px solid var(--amber); }
+    .info-box.red   { background:var(--red-l);    color:#7f1d1d; border-left:3px solid var(--red); }
+    .submit-bar { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:6px; }
+    .submit-bar p { font-size:13px; color:var(--text-2); }
+    .btn-primary { display:inline-flex; align-items:center; gap:7px; background:var(--accent); color:#fff; border:none; border-radius:10px; padding:11px 22px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:background .15s,transform .1s,box-shadow .15s; }
+    .btn-primary:hover { background:#1e4dd4; box-shadow:0 4px 16px rgba(45,91,227,.3); transform:translateY(-1px); }
+    .btn-primary:active { transform:translateY(0); }
+    .btn-primary:disabled { opacity:.65; cursor:not-allowed; transform:none!important; }
+    .btn-back { display:inline-flex; align-items:center; gap:6px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text-3); background:none; border:1.5px solid var(--border); border-radius:8px; padding:7px 13px; cursor:pointer; flex-shrink:0; transition:all .15s; }
+    .btn-back:hover { color:var(--text-2); border-color:var(--border-f); background:var(--bg); }
+    .progress-bar { height:3px; background:var(--border); border-radius:3px; margin-bottom:14px; overflow:hidden; }
+    .progress-fill { height:100%; background:var(--accent); border-radius:3px; transition:width .4s ease; }
+    .success-screen { display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:80px 32px; max-width:480px; margin:0 auto; }
+    .success-screen.visible { display:flex; animation:fadeUp .4s ease; }
+    .success-icon { font-size:64px; margin-bottom:24px; }
+    .success-screen h2 { font-family:'DM Serif Display',serif; font-size:28px; margin-bottom:12px; }
+    .success-screen p { color:var(--text-2); font-size:16px; line-height:1.6; }
+    .selector-section.hidden,.hero.hidden { display:none; }
+    .toast { position:fixed; bottom:24px; right:24px; background:#1A1612; color:#fff; padding:12px 18px; border-radius:10px; font-size:14px; z-index:300; transform:translateY(20px); opacity:0; transition:all .25s; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    footer { text-align:center; padding:32px; color:var(--text-3); font-size:13px; border-top:1px solid var(--border); }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .spin { animation:spin .8s linear infinite; }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    /* ── HEADER ── */
-    .site-header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 1px 0 var(--border);
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: 'DM Serif Display', serif;
-      font-size: 20px;
-      color: var(--text);
-      text-decoration: none;
-    }
-    .logo-dot {
-      width: 28px; height: 28px;
-      background: var(--accent);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .logo-dot svg { width: 14px; height: 14px; fill: #fff; }
-    .header-badge {
-      font-size: 12px;
-      color: var(--text-3);
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 12px;
-    }
-
-    /* ── HERO ── */
-    .hero {
-      padding: 64px 32px 48px;
-      max-width: 720px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      background: var(--accent-l);
-      padding: 6px 14px;
-      border-radius: 20px;
-      margin-bottom: 20px;
-    }
-    .hero h1 {
-      font-family: 'DM Serif Display', serif;
-      font-size: clamp(28px, 4vw, 40px);
-      line-height: 1.2;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-    .hero h1 em { font-style: italic; color: var(--accent); }
-    .hero p {
-      color: var(--text-2);
-      font-size: 16px;
-      max-width: 520px;
-      margin: 0 auto;
-    }
-
-    /* ── SELECTOR ── */
-    .selector-section {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 32px 48px;
-    }
-    .selector-label {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      color: var(--text-3);
-      margin-bottom: 16px;
-      text-align: center;
-    }
-    .selector-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-    @media (max-width: 640px) { .selector-grid { grid-template-columns: 1fr; } }
-
-    .type-card {
-      background: var(--surface);
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px 20px;
-      cursor: pointer;
-      transition: border-color .2s, box-shadow .2s, transform .15s;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .type-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--card-color, var(--accent));
-      transform: scaleX(0);
-      transition: transform .2s;
-      transform-origin: left;
-    }
-    .type-card:hover { border-color: var(--card-color, var(--accent)); box-shadow: var(--shadow); transform: translateY(-2px); }
-    .type-card:hover::before { transform: scaleX(1); }
-    .type-card.active { border-color: var(--card-color, var(--accent)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--card-color, var(--accent)) 15%, transparent); }
-    .type-card.active::before { transform: scaleX(1); }
-
-    .type-card[data-type="advogada"]    { --card-color: #7C3AED; }
-    .type-card[data-type="brindes"]     { --card-color: #2D5BE3; }
-    .type-card[data-type="odontologia"] { --card-color: #1A7A5E; }
-
-    .type-icon {
-      width: 52px; height: 52px;
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 14px;
-      font-size: 24px;
-      background: color-mix(in srgb, var(--card-color, var(--accent)) 12%, white);
-    }
-    .type-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-    .type-card p { font-size: 13px; color: var(--text-2); }
-
-    /* ── FORM WRAPPER ── */
-    .form-wrapper {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 32px 80px;
-      display: none;
-    }
-    .form-wrapper.visible { display: block; animation: fadeUp .35s ease; }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .form-header {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px 32px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .form-header-icon {
-      width: 56px; height: 56px; flex-shrink: 0;
-      border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
-    }
-    .form-header h2 { font-family: 'DM Serif Display', serif; font-size: 22px; }
-    .form-header p { color: var(--text-2); font-size: 14px; margin-top: 4px; }
-
-    /* ── SECTION ── */
-    .form-section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 16px;
-      overflow: hidden;
-    }
-    .section-header {
-      padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      user-select: none;
-      border-bottom: 1px solid transparent;
-      transition: background .15s;
-    }
-    .section-header:hover { background: var(--bg); }
-    .section-header.open { border-bottom-color: var(--border); }
-    .section-num {
-      width: 28px; height: 28px;
-      border-radius: 8px;
-      background: var(--accent-l);
-      color: var(--accent);
-      font-size: 12px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .section-title { font-size: 14px; font-weight: 600; flex: 1; }
-    .section-chevron {
-      width: 18px; height: 18px;
-      color: var(--text-3);
-      transition: transform .2s;
-    }
-    .section-header.open .section-chevron { transform: rotate(180deg); }
-    .section-badge {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      background: var(--green-l);
-      color: var(--green);
-      font-weight: 600;
-      display: none;
-    }
-    .section-badge.show { display: inline-block; }
-
-    .section-body {
-      padding: 24px;
-      display: none;
-    }
-    .section-body.open { display: block; }
-
-    /* ── FIELDS ── */
-    .field-grid {
-      display: grid;
-      gap: 16px;
-    }
-    .field-grid-2 { grid-template-columns: 1fr 1fr; }
-    .field-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-    @media (max-width: 640px) {
-      .field-grid-2, .field-grid-3 { grid-template-columns: 1fr; }
-    }
-
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field-full { grid-column: 1 / -1; }
-
-    label {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-2);
-    }
-    label .req { color: var(--red); margin-left: 2px; }
-    label .hint {
-      font-weight: 400;
-      color: var(--text-3);
-      font-size: 12px;
-      display: block;
-      margin-top: 2px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="number"],
-    input[type="url"],
-    select,
-    textarea {
-      width: 100%;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      color: var(--text);
-      background: var(--surface);
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 14px;
-      transition: border-color .15s, box-shadow .15s;
-      outline: none;
-      -webkit-appearance: none;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-l);
-    }
-    input::placeholder, textarea::placeholder { color: var(--text-3); }
-    textarea { resize: vertical; min-height: 80px; }
-    select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A09589' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-
-    /* toggle checkboxes */
-    .toggle-group { display: flex; flex-wrap: wrap; gap: 8px; }
-    .toggle-opt {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 13px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 7px 12px;
-      cursor: pointer;
-      transition: border-color .15s, background .15s;
-      background: var(--surface);
-      user-select: none;
-    }
-    .toggle-opt input { display: none; }
-    .toggle-opt.checked { border-color: var(--accent); background: var(--accent-l); color: var(--accent); font-weight: 500; }
-    .toggle-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--border-f);
-      flex-shrink: 0;
-      transition: background .15s;
-    }
-    .toggle-opt.checked .toggle-dot { background: var(--accent); }
-
-    /* radio tabs */
-    .radio-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
-    .radio-tab {
-      font-size: 13px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 7px 16px;
-      cursor: pointer;
-      transition: all .15s;
-      background: var(--surface);
-      user-select: none;
-    }
-    .radio-tab.selected { border-color: var(--accent); background: var(--accent-l); color: var(--accent); font-weight: 500; }
-
-    /* repeater */
-    .repeater-item {
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      padding: 20px;
-      background: var(--bg);
-      position: relative;
-      margin-bottom: 12px;
-    }
-    .repeater-header {
-      font-size: 13px; font-weight: 600;
-      color: var(--text-2);
-      margin-bottom: 14px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .btn-remove {
-      font-size: 12px; color: var(--red);
-      background: none; border: none;
-      cursor: pointer; padding: 4px 8px;
-      border-radius: 6px;
-      transition: background .15s;
-    }
-    .btn-remove:hover { background: var(--red-l); }
-    .btn-add {
-      width: 100%;
-      border: 1.5px dashed var(--border);
-      background: none;
-      border-radius: 10px;
-      padding: 12px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--accent);
-      cursor: pointer;
-      transition: background .15s, border-color .15s;
-      margin-top: 4px;
-      font-weight: 500;
-    }
-    .btn-add:hover { background: var(--accent-l); border-color: var(--accent); }
-
-    /* info box */
-    .info-box {
-      border-radius: 10px;
-      padding: 14px 16px;
-      font-size: 13px;
-      margin-bottom: 20px;
-      display: flex; gap: 10px; align-items: flex-start;
-      line-height: 1.5;
-    }
-    .info-box.blue  { background: var(--accent-l); color: #1d4ed8; border-left: 3px solid var(--accent); }
-    .info-box.green { background: var(--green-l);  color: #065f46; border-left: 3px solid var(--green); }
-    .info-box.amber { background: var(--amber-l);  color: #92400e; border-left: 3px solid var(--amber); }
-    .info-box.red   { background: var(--red-l);    color: #7f1d1d; border-left: 3px solid var(--red); }
-
-    /* divider */
-    .divider {
-      border: none; border-top: 1px solid var(--border);
-      margin: 20px 0;
-    }
-
-    /* ── SUBMIT BAR ── */
-    .submit-bar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-top: 8px;
-    }
-    .submit-bar p { font-size: 13px; color: var(--text-2); }
-
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 24px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px; font-weight: 600;
-      cursor: pointer;
-      transition: background .15s, transform .1s, box-shadow .15s;
-    }
-    .btn-primary:hover { background: #1e4dd4; box-shadow: 0 4px 16px rgba(45,91,227,.3); transform: translateY(-1px); }
-    .btn-primary:active { transform: translateY(0); }
-
-    .btn-secondary {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--bg);
-      color: var(--text-2);
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      padding: 11px 20px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px; font-weight: 500;
-      cursor: pointer;
-      transition: all .15s;
-    }
-    .btn-secondary:hover { border-color: var(--border-f); color: var(--text); }
-
-    /* ── MODAL / JSON ── */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.45);
-      backdrop-filter: blur(4px);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .modal-overlay.open { display: flex; animation: fadeIn .2s ease; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-    .modal {
-      background: var(--surface);
-      border-radius: 16px;
-      width: 100%;
-      max-width: 700px;
-      max-height: 90vh;
-      overflow: hidden;
-      display: flex; flex-direction: column;
-      box-shadow: var(--shadow-lg);
-      animation: scaleIn .25s ease;
-    }
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scale(.96); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-
-    .modal-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .modal-header h3 { font-size: 16px; font-weight: 600; }
-    .modal-header p { font-size: 13px; color: var(--text-2); margin-top: 2px; }
-
-    .btn-close {
-      width: 32px; height: 32px;
-      border-radius: 8px; border: 1.5px solid var(--border);
-      background: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: background .15s;
-    }
-    .btn-close:hover { background: var(--bg); }
-
-    .modal-body {
-      flex: 1; overflow-y: auto;
-      padding: 20px 24px;
-    }
-
-    .json-output {
-      background: #1A1612;
-      color: #E8D9C5;
-      border-radius: 10px;
-      padding: 20px;
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      white-space: pre;
-      overflow-x: auto;
-    }
-    .json-key   { color: #7DD3FC; }
-    .json-str   { color: #86EFAC; }
-    .json-num   { color: #FCA5A5; }
-    .json-bool  { color: #F9A8D4; }
-
-    .modal-footer {
-      padding: 16px 24px;
-      border-top: 1px solid var(--border);
-      display: flex; gap: 10px; justify-content: flex-end;
-    }
-
-    /* ── TOAST ── */
-    .toast {
-      position: fixed; bottom: 24px; right: 24px;
-      background: var(--text);
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 14px;
-      z-index: 300;
-      transform: translateY(20px);
-      opacity: 0;
-      transition: all .25s;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.success { background: var(--green); }
-
-    /* ── FOOTER ── */
-    footer {
-      text-align: center;
-      padding: 32px;
-      color: var(--text-3);
-      font-size: 13px;
-      border-top: 1px solid var(--border);
-    }
-
-    /* ── PROGRESS ── */
-    .progress-bar {
-      height: 3px;
-      background: var(--border);
-      border-radius: 3px;
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: var(--accent);
-      border-radius: 3px;
-      transition: width .4s ease;
-    }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="site-header">
   <a class="logo" href="#">
     <div class="logo-dot">
       <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
     </div>
-    Agente IA · Onboarding
+    Agente IA &middot; Onboarding
   </a>
-  <span class="header-badge">Formulário Confidencial</span>
+  <span class="header-badge">Formul&aacute;rio Confidencial</span>
 </header>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    Configuração do Agente de IA
+    Configura&ccedil;&atilde;o do Agente de IA
   </div>
-  <h1>Preencha as informações do seu <em>negócio</em></h1>
-  <p>Selecione o tipo de negócio abaixo e preencha o formulário. As informações serão salvas automaticamente em formato JSON, pronto para configurar seu agente.</p>
+  <h1>Preencha as informa&ccedil;&otilde;es do seu <em>neg&oacute;cio</em></h1>
+  <p>Selecione o tipo de neg&oacute;cio abaixo e preencha o formul&aacute;rio. Ao clicar em <strong>Salvar</strong>, suas respostas s&atilde;o enviadas diretamente ao desenvolvedor.</p>
 </div>
 
-<!-- TYPE SELECTOR -->
-<div class="selector-section">
-  <div class="selector-label">Selecione o tipo de negócio</div>
+<div class="selector-section" id="selector-section">
+  <div class="selector-label">Selecione o tipo de neg&oacute;cio</div>
   <div class="selector-grid">
     <div class="type-card" data-type="advogada" onclick="selectType('advogada')">
-      <div class="type-icon">⚖️</div>
-      <h3>Escritório de Advocacia</h3>
-      <p>Advogados e escritórios jurídicos</p>
+      <div class="type-icon" style="background:#F3E5F5">&#9878;&#65039;</div>
+      <h3>Escrit&oacute;rio de Advocacia</h3>
+      <p>Advogados e escrit&oacute;rios jur&iacute;dicos</p>
     </div>
     <div class="type-card" data-type="brindes" onclick="selectType('brindes')">
-      <div class="type-icon">🎁</div>
+      <div class="type-icon" style="background:#EEF2FD">&#127873;</div>
       <h3>Loja de Brindes</h3>
       <p>Brindes e presentes personalizados</p>
     </div>
     <div class="type-card" data-type="odontologia" onclick="selectType('odontologia')">
-      <div class="type-icon">🦷</div>
-      <h3>Consultório Odontológico</h3>
-      <p>Clínicas e consultórios dentários</p>
+      <div class="type-icon" style="background:#E8F6F1">&#129463;</div>
+      <h3>Consult&oacute;rio Odontol&oacute;gico</h3>
+      <p>Cl&iacute;nicas e consult&oacute;rios dent&aacute;rios</p>
     </div>
   </div>
 </div>
 
-<!-- FORMS -->
+<!-- FORM ADVOCACIA -->
 <div class="form-wrapper" id="form-advogada">
-  <div id="header-advogada" class="form-header">
-    <div class="form-header-icon" style="background:#F3E5F5">⚖️</div>
-    <div>
-      <h2>Escritório de Advocacia</h2>
-      <p>Preencha todas as informações para configurar o assistente jurídico</p>
+  <div class="form-header">
+    <div class="form-header-icon" style="background:#F3E5F5">&#9878;&#65039;</div>
+    <div style="flex:1">
+      <h2>Escrit&oacute;rio de Advocacia</h2>
+      <p>Preencha todas as informa&ccedil;&otilde;es para configurar o assistente jur&iacute;dico</p>
     </div>
+    <button class="btn-back" onclick="goBack()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Trocar tipo
+    </button>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progress-advogada" style="width:0%"></div></div>
-  <!-- sections injected by JS -->
   <div id="sections-advogada"></div>
   <div class="submit-bar">
-    <p>🔒 Seus dados são salvos apenas neste dispositivo</p>
-    <div style="display:flex;gap:10px">
-      <button class="btn-secondary" onclick="clearForm('advogada')">Limpar tudo</button>
-      <button class="btn-primary" onclick="generateJSON('advogada')">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        Gerar JSON
-      </button>
-    </div>
+    <p>&#128228; Ao salvar, suas respostas s&atilde;o enviadas ao desenvolvedor</p>
+    <button class="btn-primary" id="btn-save-advogada" onclick="saveForm('advogada')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v13a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Salvar
+    </button>
   </div>
 </div>
 
+<!-- FORM BRINDES -->
 <div class="form-wrapper" id="form-brindes">
-  <div id="header-brindes" class="form-header">
-    <div class="form-header-icon" style="background:#EEF2FD">🎁</div>
-    <div>
+  <div class="form-header">
+    <div class="form-header-icon" style="background:#EEF2FD">&#127873;</div>
+    <div style="flex:1">
       <h2>Loja de Brindes</h2>
-      <p>Preencha todas as informações para configurar o assistente comercial</p>
+      <p>Preencha todas as informa&ccedil;&otilde;es para configurar o assistente comercial</p>
     </div>
+    <button class="btn-back" onclick="goBack()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Trocar tipo
+    </button>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progress-brindes" style="width:0%"></div></div>
   <div id="sections-brindes"></div>
   <div class="submit-bar">
-    <p>🔒 Seus dados são salvos apenas neste dispositivo</p>
-    <div style="display:flex;gap:10px">
-      <button class="btn-secondary" onclick="clearForm('brindes')">Limpar tudo</button>
-      <button class="btn-primary" onclick="generateJSON('brindes')">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        Gerar JSON
-      </button>
-    </div>
+    <p>&#128228; Ao salvar, suas respostas s&atilde;o enviadas ao desenvolvedor</p>
+    <button class="btn-primary" id="btn-save-brindes" onclick="saveForm('brindes')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v13a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Salvar
+    </button>
   </div>
 </div>
 
+<!-- FORM ODONTOLOGIA -->
 <div class="form-wrapper" id="form-odontologia">
-  <div id="header-odontologia" class="form-header">
-    <div class="form-header-icon" style="background:#E8F6F1">🦷</div>
-    <div>
-      <h2>Consultório Odontológico</h2>
-      <p>Preencha todas as informações para configurar o assistente da clínica</p>
+  <div class="form-header">
+    <div class="form-header-icon" style="background:#E8F6F1">&#129463;</div>
+    <div style="flex:1">
+      <h2>Consult&oacute;rio Odontol&oacute;gico</h2>
+      <p>Preencha todas as informa&ccedil;&otilde;es para configurar o assistente da cl&iacute;nica</p>
     </div>
+    <button class="btn-back" onclick="goBack()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Trocar tipo
+    </button>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progress-odontologia" style="width:0%"></div></div>
   <div id="sections-odontologia"></div>
   <div class="submit-bar">
-    <p>🔒 Seus dados são salvos apenas neste dispositivo</p>
-    <div style="display:flex;gap:10px">
-      <button class="btn-secondary" onclick="clearForm('odontologia')">Limpar tudo</button>
-      <button class="btn-primary" onclick="generateJSON('odontologia')">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        Gerar JSON
-      </button>
-    </div>
+    <p>&#128228; Ao salvar, suas respostas s&atilde;o enviadas ao desenvolvedor</p>
+    <button class="btn-primary" id="btn-save-odontologia" onclick="saveForm('odontologia')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v13a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Salvar
+    </button>
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <h3>JSON Gerado</h3>
-        <p id="modal-subtitle">Pronto para configurar seu agente de IA</p>
-      </div>
-      <button class="btn-close" onclick="closeModal()">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <pre class="json-output" id="json-display"></pre>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="copyJSON()">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 17.929H6c-1.105 0-2-.912-2-2.036V5.036C4 3.91 4.895 3 6 3h8c1.105 0 2 .911 2 2.036v1.866m-6 .17h8c1.105 0 2 .91 2 2.035v10.857C20 21.09 19.105 22 18 22h-8c-1.105 0-2-.911-2-2.036V9.107c0-1.124.895-2.036 2-2.036z"/></svg>
-        Copiar JSON
-      </button>
-      <button class="btn-primary" onclick="downloadJSON()">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        Baixar .json
-      </button>
-    </div>
-  </div>
+<!-- SUCCESS -->
+<div class="success-screen" id="success-screen">
+  <div class="success-icon">&#9989;</div>
+  <h2>Formul&aacute;rio enviado com sucesso!</h2>
+  <p>Suas informa&ccedil;&otilde;es foram salvas e enviadas ao desenvolvedor.<br>Em breve entraremos em contato para as pr&oacute;ximas etapas.</p>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
-
-<footer>
-  Formulário Confidencial · Uso interno do desenvolvedor · v1.0 · 2025
-</footer>
+<footer>Formul&aacute;rio Confidencial &middot; Uso interno do desenvolvedor &middot; v1.0 &middot; 2025</footer>
 
 <script>
-// ═══════════════════════════════════════════════════════
-// SCHEMAS – definição de todos os campos por tipo
-// ═══════════════════════════════════════════════════════
-
 const SCHEMAS = {
 
   // ── ADVOCACIA ─────────────────────────────────────────
@@ -1016,38 +532,7 @@ const SCHEMAS = {
   ]
 };
 
-// ═══════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════
-let currentType = null;
-let jsonOutput  = null;
 
-// ═══════════════════════════════════════════════════════
-// INIT – render all forms on load
-// ═══════════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => {
-  Object.keys(SCHEMAS).forEach(type => renderForm(type));
-});
-
-// ═══════════════════════════════════════════════════════
-// SELECT TYPE
-// ═══════════════════════════════════════════════════════
-function selectType(type) {
-  currentType = type;
-
-  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
-  document.querySelector(`.type-card[data-type="${type}"]`).classList.add('active');
-
-  ['advogada','brindes','odontologia'].forEach(t => {
-    const el = document.getElementById('form-' + t);
-    if (t === type) { el.classList.add('visible'); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-    else el.classList.remove('visible');
-  });
-}
-
-// ═══════════════════════════════════════════════════════
-// RENDER FORM
-// ═══════════════════════════════════════════════════════
 function renderForm(type) {
   const container = document.getElementById('sections-' + type);
   const schema    = SCHEMAS[type];
@@ -1387,72 +872,163 @@ function restoreFormData(type, data) {
   });
 }
 
-// ═══════════════════════════════════════════════════════
-// GENERATE JSON
-// ═══════════════════════════════════════════════════════
-function generateJSON(type) {
-  const data = collectFormData(type);
-  jsonOutput  = data;
 
-  const formatted = syntaxHighlight(JSON.stringify(data, null, 2));
-  document.getElementById('json-display').innerHTML = formatted;
 
-  const labels = { advogada: 'Escritório de Advocacia', brindes: 'Loja de Brindes', odontologia: 'Consultório Odontológico' };
-  document.getElementById('modal-subtitle').textContent = labels[type];
+// =============================================================
+// CONFIG – Google Drive
+// DEVELOPER: substitua os 3 valores abaixo.
+// 1. GDRIVE_FOLDER_ID : 17rBmER0dJwkgLRaDlsCvFlgqXt-bI1O5
+// 2. GDRIVE_CLIENT_ID : 1007924788759-23i3jlg06j5cvsg7gnnsl0v83lum5k6h.apps.googleusercontent.com
+// 3. GDRIVE_API_KEY   : AIzaSyAmZ6LOVmGrPOtolbO0itjeHSdDmFRZQDs
+// =============================================================
+const GDRIVE_FOLDER_ID = 'SUBSTITUA_PELO_ID_DA_PASTA';
+const GDRIVE_CLIENT_ID = 'SUBSTITUA_PELO_CLIENT_ID.apps.googleusercontent.com';
+const GDRIVE_API_KEY   = 'SUBSTITUA_PELA_API_KEY';
+const GDRIVE_SCOPES    = 'https://www.googleapis.com/auth/drive.file';
 
-  document.getElementById('modal').classList.add('open');
-}
+let tokenClient     = null;
+let accessToken     = null;
+let pendingSaveType = null;
 
-function syntaxHighlight(json) {
-  return json
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => {
-      let cls = 'json-num';
-      if (/^"/.test(m)) cls = /:$/.test(m) ? 'json-key' : 'json-str';
-      else if (/true|false/.test(m)) cls = 'json-bool';
-      return `<span class="${cls}">${m}</span>`;
+function loadGoogleAPIs() {
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = () => {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GDRIVE_CLIENT_ID,
+      scope: GDRIVE_SCOPES,
+      callback: (resp) => {
+        if (resp.error) { showToast('Erro de autenticacao Google.'); resetBtn(pendingSaveType); return; }
+        accessToken = resp.access_token;
+        if (pendingSaveType) { doSaveToDrive(pendingSaveType); pendingSaveType = null; }
+      }
     });
+  };
+  document.head.appendChild(s);
+}
+loadGoogleAPIs();
+
+// =============================================================
+// SELECT TYPE – esconde hero+seletor ao selecionar tipo
+// =============================================================
+let currentType = null;
+
+function selectType(type) {
+  currentType = type;
+  document.getElementById('selector-section').classList.add('hidden');
+  document.querySelector('.hero').classList.add('hidden');
+  ['advogada','brindes','odontologia'].forEach(t =>
+    document.getElementById('form-' + t).classList.remove('visible')
+  );
+  document.getElementById('form-' + type).classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-function copyJSON() {
-  if (!jsonOutput) return;
-  navigator.clipboard.writeText(JSON.stringify(jsonOutput, null, 2)).then(() => showToast('✓ JSON copiado!', 'success'));
+function goBack() {
+  ['advogada','brindes','odontologia'].forEach(t =>
+    document.getElementById('form-' + t).classList.remove('visible')
+  );
+  document.getElementById('selector-section').classList.remove('hidden');
+  document.querySelector('.hero').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  currentType = null;
 }
 
-function downloadJSON() {
-  if (!jsonOutput) return;
-  const blob = new Blob([JSON.stringify(jsonOutput, null, 2)], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `onboarding_${jsonOutput._tipo}_${Date.now()}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('✓ Download iniciado!', 'success');
+// =============================================================
+// SAVE FORM – envia JSON para o Google Drive do desenvolvedor
+// =============================================================
+async function saveForm(type) {
+  setSavingState(type, true);
+  if (!accessToken) {
+    pendingSaveType = type;
+    if (tokenClient) {
+      tokenClient.requestAccessToken({ prompt: '' });
+    } else {
+      setTimeout(() => {
+        if (tokenClient) tokenClient.requestAccessToken({ prompt: '' });
+        else { showToast('Erro ao carregar autenticacao Google.'); resetBtn(type); }
+      }, 2000);
+    }
+    return;
+  }
+  await doSaveToDrive(type);
 }
 
-function clearForm(type) {
-  if (!confirm('Tem certeza? Todos os dados preenchidos serão apagados.')) return;
-  localStorage.removeItem('onboarding_' + type);
-  renderForm(type);
-  showToast('Formulário limpo.');
+async function doSaveToDrive(type) {
+  setSavingState(type, true);
+  try {
+    const data    = collectFormData(type);
+    const jsonStr = JSON.stringify(data, null, 2);
+    const labels  = { advogada: 'Advocacia', brindes: 'Brindes', odontologia: 'Odontologia' };
+    const nome    = data.nome_escritorio || data.nome_loja || data.nome_clinica || 'Cliente';
+    const date    = new Date().toISOString().slice(0, 10);
+    const fname   = 'Onboarding_' + labels[type] + '_' + nome + '_' + date + '.json';
+
+    const boundary = '-------314159265358979323846';
+    const metadata = { name: fname, mimeType: 'application/json', parents: [GDRIVE_FOLDER_ID] };
+    const body =
+      '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' +
+      JSON.stringify(metadata) +
+      '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' +
+      jsonStr +
+      '\r\n--' + boundary + '--';
+
+    const resp = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'multipart/related; boundary="' + boundary + '"'
+      },
+      body
+    });
+
+    if (resp.status === 401) {
+      accessToken = null; pendingSaveType = type;
+      tokenClient.requestAccessToken({ prompt: '' });
+      return;
+    }
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+    document.getElementById('form-' + type).classList.remove('visible');
+    document.getElementById('success-screen').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch (err) {
+    console.error(err);
+    showToast('Erro ao salvar. Verifique sua conexao e tente novamente.');
+    resetBtn(type);
+  }
 }
 
-// ═══════════════════════════════════════════════════════
+function setSavingState(type, saving) {
+  const btn = document.getElementById('btn-save-' + type);
+  if (!btn) return;
+  btn.disabled = saving;
+  const iconSave = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v13a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>';
+  const iconSpin = '<svg class="spin" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>';
+  btn.innerHTML = (saving ? iconSpin + ' Salvando...' : iconSave + ' Salvar');
+}
+function resetBtn(type) { setSavingState(type, false); }
+
+// INIT
+window.addEventListener('DOMContentLoaded', () => {
+  Object.keys(SCHEMAS).forEach(type => renderForm(type));
+  setTimeout(() => {
+    Object.keys(SCHEMAS).forEach(type => {
+      const saved = localStorage.getItem('onboarding_' + type);
+      if (saved) { try { restoreFormData(type, JSON.parse(saved)); } catch(e){} }
+    });
+  }, 120);
+});
+
 // TOAST
-// ═══════════════════════════════════════════════════════
-function showToast(msg, cls = '') {
+function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.className   = 'toast' + (cls ? ' ' + cls : '');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  t.className = 'toast show';
+  setTimeout(() => t.classList.remove('show'), 3200);
 }
 
-// Close modal on overlay click
-document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
 </script>
 </body>
 </html>
