@@ -877,13 +877,13 @@ function restoreFormData(type, data) {
 // =============================================================
 // CONFIG – Google Drive
 // DEVELOPER: substitua os 3 valores abaixo.
-// 1. GDRIVE_FOLDER_ID : 17rBmER0dJwkgLRaDlsCvFlgqXt-bI1O5
-// 2. GDRIVE_CLIENT_ID : 1007924788759-23i3jlg06j5cvsg7gnnsl0v83lum5k6h.apps.googleusercontent.com
-// 3. GDRIVE_API_KEY   : AIzaSyAmZ6LOVmGrPOtolbO0itjeHSdDmFRZQDs
+// 1. GDRIVE_FOLDER_ID : ID da pasta no Drive (URL após /folders/)
+// 2. GDRIVE_CLIENT_ID : Google Cloud Console → Credentials → OAuth 2.0
+// 3. GDRIVE_API_KEY   : Google Cloud Console → Credentials → API Key
 // =============================================================
-const GDRIVE_FOLDER_ID = 'SUBSTITUA_PELO_ID_DA_PASTA';
-const GDRIVE_CLIENT_ID = 'SUBSTITUA_PELO_CLIENT_ID.apps.googleusercontent.com';
-const GDRIVE_API_KEY   = 'SUBSTITUA_PELA_API_KEY';
+const GDRIVE_FOLDER_ID = '17rBmER0dJwkgLRaDlsCvFlgqXt-bI1O5';
+const GDRIVE_CLIENT_ID = '1007924788759-23i3jlg06j5cvsg7gnnsl0v83lum5k6h.apps.googleusercontent.com';
+const GDRIVE_API_KEY   = 'AIzaSyAmZ6LOVmGrPOtolbO0itjeHSdDmFRZQDs';
 const GDRIVE_SCOPES    = 'https://www.googleapis.com/auth/drive.file';
 
 let tokenClient     = null;
