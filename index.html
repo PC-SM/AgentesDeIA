@@ -875,38 +875,9 @@ function restoreFormData(type, data) {
 
 
 // =============================================================
-// CONFIG – Google Drive
-// DEVELOPER: substitua os 3 valores abaixo.
-// 1. GDRIVE_FOLDER_ID : ID da pasta no Drive (URL após /folders/)
-// 2. GDRIVE_CLIENT_ID : Google Cloud Console → Credentials → OAuth 2.0
-// 3. GDRIVE_API_KEY   : Google Cloud Console → Credentials → API Key
+// CONFIG – Google Apps Script (sem login para o cliente)
 // =============================================================
-const GDRIVE_FOLDER_ID = '17rBmER0dJwkgLRaDlsCvFlgqXt-bI1O5';
-const GDRIVE_CLIENT_ID = '1007924788759-23i3jlg06j5cvsg7gnnsl0v83lum5k6h.apps.googleusercontent.com';
-const GDRIVE_API_KEY   = 'AIzaSyAmZ6LOVmGrPOtolbO0itjeHSdDmFRZQDs';
-const GDRIVE_SCOPES    = 'https://www.googleapis.com/auth/drive.file';
-
-let tokenClient     = null;
-let accessToken     = null;
-let pendingSaveType = null;
-
-function loadGoogleAPIs() {
-  const s = document.createElement('script');
-  s.src = 'https://accounts.google.com/gsi/client';
-  s.onload = () => {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: GDRIVE_CLIENT_ID,
-      scope: GDRIVE_SCOPES,
-      callback: (resp) => {
-        if (resp.error) { showToast('Erro de autenticacao Google.'); resetBtn(pendingSaveType); return; }
-        accessToken = resp.access_token;
-        if (pendingSaveType) { doSaveToDrive(pendingSaveType); pendingSaveType = null; }
-      }
-    });
-  };
-  document.head.appendChild(s);
-}
-loadGoogleAPIs();
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZHbdSZMW4tId_GvSEWB_vzg1J5ZvyMm1qa6oIV_Buj07UgvufHqKkAI-Xbo4sKczRMA/exec';
 
 // =============================================================
 // SELECT TYPE – esconde hero+seletor ao selecionar tipo
@@ -935,60 +906,25 @@ function goBack() {
 }
 
 // =============================================================
-// SAVE FORM – envia JSON para o Google Drive do desenvolvedor
+// SAVE FORM – envia JSON para o Apps Script (sem login)
 // =============================================================
 async function saveForm(type) {
   setSavingState(type, true);
-  if (!accessToken) {
-    pendingSaveType = type;
-    if (tokenClient) {
-      tokenClient.requestAccessToken({ prompt: '' });
-    } else {
-      setTimeout(() => {
-        if (tokenClient) tokenClient.requestAccessToken({ prompt: '' });
-        else { showToast('Erro ao carregar autenticacao Google.'); resetBtn(type); }
-      }, 2000);
-    }
-    return;
-  }
-  await doSaveToDrive(type);
-}
-
-async function doSaveToDrive(type) {
-  setSavingState(type, true);
   try {
-    const data    = collectFormData(type);
-    const jsonStr = JSON.stringify(data, null, 2);
-    const labels  = { advogada: 'Advocacia', brindes: 'Brindes', odontologia: 'Odontologia' };
-    const nome    = data.nome_escritorio || data.nome_loja || data.nome_clinica || 'Cliente';
-    const date    = new Date().toISOString().slice(0, 10);
-    const fname   = 'Onboarding_' + labels[type] + '_' + nome + '_' + date + '.json';
+    const data = collectFormData(type);
 
-    const boundary = '-------314159265358979323846';
-    const metadata = { name: fname, mimeType: 'application/json', parents: [GDRIVE_FOLDER_ID] };
-    const body =
-      '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' +
-      JSON.stringify(metadata) +
-      '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' +
-      jsonStr +
-      '\r\n--' + boundary + '--';
+    // Apps Script não aceita JSON direto via POST cross-origin,
+    // usamos no-cors com FormData
+    const form = new FormData();
+    form.append('payload', JSON.stringify(data));
 
-    const resp = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + accessToken,
-        'Content-Type': 'multipart/related; boundary="' + boundary + '"'
-      },
-      body
+      mode: 'no-cors',
+      body: form
     });
 
-    if (resp.status === 401) {
-      accessToken = null; pendingSaveType = type;
-      tokenClient.requestAccessToken({ prompt: '' });
-      return;
-    }
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-
+    // no-cors não retorna resposta legível — se não jogou erro, assumimos sucesso
     document.getElementById('form-' + type).classList.remove('visible');
     document.getElementById('success-screen').classList.add('visible');
     window.scrollTo({ top: 0, behavior: 'smooth' });
